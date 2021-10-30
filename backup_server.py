@@ -177,16 +177,7 @@ def another():
 
 @app.route('/bioagent')
 def bioagent():
-
-    cursor = g.conn.execute("SELECT agentname as name FROM bioagent")
-    bio_names = []
-    for result in cursor:      
-        bio_names.append(result['name'])  # can also be accessed using result[0]
-    cursor.close()    
-    
-    context = dict(data=bio_names)
-    
-    return render_template("bioagent.html", **context)
+    return render_template("bioagent.html", context)
 
 
 # Example of adding new data to the database
