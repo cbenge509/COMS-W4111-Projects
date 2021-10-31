@@ -25,6 +25,7 @@ This repository contains the collaboration between Cris and Chisom for the Proje
 |:-----|:------------|
 | [create_tables.sql](./sql_scripts/create_tables.sql) | SQL script used to create the tables in a PostgreSQL database for Project 1, Part 2 (approved by TA) |
 | [populate_date.sql](./sql_scripts/populate_data.sql) | SQL script used to populate simulated data for the tables in a PostgreSQL database for Project 1, Part 2 (approved by TA) |
+| [secondary_actor_queries.sql](./sql_scripts/secondary_actor_queries.sql) | SQL script with example queries for each of the secondary actor functions depicted below in the use case diagram. |
 
 ---
 
