@@ -1,0 +1,28 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+    ul {
+    list-style-type: none;
+    }
+  </style>
+
+
+<body>
+  <h1>Hello, {{ user }}.</h1>
+
+  <p><a href="/logout">Select another user.</a></p>
+  
+  <p><a href="/experiment">View experiments</a></p>
+  
+  <form method="POST" action="/add_experiment">
+  <p>Create a new experiment: <input type="text" name="name"> <input type="submit" value="Add"></p>
+  </form>
+
+  <p>
+  
+ </body>
+
+</html>
