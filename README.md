@@ -34,6 +34,16 @@ A depiction of our database diagram is available below for reference:
 
 <img src="./images/ERDiagram.png">
 
+---
+
+## Activity Case Diagram (UML)
+
+Below is a high-level depiction of the primary (researcher) and secondary (administrator, inspector, facilitor) actors and their basic interaction points within our application.  For guidance on how to read / interpret an Activity Case diagram, please watch [this short video](https://www.youtube.com/watch?v=zid-MVo7M-E).
+
+<img src="./images/CaseDiagram.png">
+
+---
+
 ## Other Information 
 
 A few important links for the course has been provided below:
