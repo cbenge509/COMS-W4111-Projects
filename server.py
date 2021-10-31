@@ -25,11 +25,13 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
+import app_queries as ap
 from flask import Flask, request, render_template, g, redirect, Response, \
                   session, url_for
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
+
 
 
 #
@@ -108,9 +110,14 @@ def teardown_request(exception):
 #
 def research_dashboard():
     user = session['entityid']
+
+    cursor = g.conn.execute("select entityname from researchentity where entityid = {0}".format(user))
+    username ={}
+    for r in cursor:
+        username = r['entityname']
+    cursor.close()    
     
-    
-    context = dict(user=user)
+    context = dict(user=username)
     return render_template('research-dashboard.html', **context)
 
 @app.route('/')
@@ -153,10 +160,42 @@ def another():
   return render_template("another.html")
 
 
+@app.route('/incident')
+def incident():
+  return render_template("incident.html")
+
+
+@app.route('/labs')
+def labs():
+  return render_template("labs.html")
+
 
 @app.route('/experiment')
 def experiment():
-  return render_template("experiment.html")
+    # has_experiments = ap.has_experiments(session['entityid'])
+    
+    user = session['entityid']
+    
+
+     
+    icursor = g.conn.execute("select * from experiment where entityid = {0}".format(user))
+    experiments = {}
+    for results in icursor:
+        experiments[results['experimentid']] = results
+    icursor.close()
+    
+    icursor = g.conn.execute("select distinct experimentstatus as status from experiment")
+    statuses = {}
+    i = 0
+    for results in icursor:
+        statuses[i] = results['status']
+        i = i+1
+    icursor.close()    
+    
+    
+    
+    context = dict( data=experiments, statuses=statuses)
+    return render_template("experiment.html", **context)
 
 
 @app.route('/bioagent')
