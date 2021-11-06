@@ -1,47 +1,53 @@
-<html>
-  <style>
-    body{ 
-      font-size: 15pt;
-      font-family: arial;
-    }
-  </style>
+<!doctype html>
+<head>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+</style>
+</head>
+
+  <p><a href="/">Back to landing</a></p>
+
+{% if comments %}
+<p>Your Experiments</p>
+<table style="width:100%">
+  <tr>
+    <th>Experimentid</th>
+    <th>Experiment Status</th>
+    <th>Experiment Start Date</th>
+    <th>Experiment End Date</th>        
+  </tr>
+  {% for comment in comments %}
+  <tr>
+    <td>{{comment.experimentid}}</td>
+    <td>{{comment.experimentstatus}}</td>
+    <td>{{comment.experimentstartdate}}</td>
+    <td>{{comment.experimentcloseddate}}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
 
 
-<body>
-  <h1>Your experiments</h1>
-  <div>{{data}}</div>
-
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
-  
-  
   <form method="POST" action="/add_experiment">
-  <p>Create a new experiment: 
+  <p>Create a new experiment: </p>
     <label for="experimentstartdate">Experiment Start Date:</label><br>
     <input type="date" id="experimentstartdate" name="startdate"><br>
     <label for="experimentenddate">Experiment End Date:</label><br>
-    <input type="date" id="experimentenddate" name="enddate">
-        <select name="experimentstatus" id="user">
-            {% for experimentstatus in statuses.items() %}
-                <div> <option value="{{experimentstatus}}"> {{ status }} </option> </div>
-            {% endfor %}
-        </select>
+    <input type="date" id="experimentenddate" name="enddate"> </br>
+    <select name="exstatus" id="estatus">
+            <option value = "design" selected>Design</option>
+            <option value = "initiated">initiated</option>
+            <option value = "in-progress">in-progress</option>
+            <option value = "closed">closed</option>
+            <option value = "cancelled">cancelled</option>
+            <option value = "on-hold">on-hold</option>
+    </select>
   <input type="submit" value="Add"></p>
   </form>
-  
-
-
-<p><a href="another">Go to the other page</a></p>
-
-
-<form method="POST" action="/add">
-<p>Name of new research entity: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
-
-</body>
-
-
-</html>

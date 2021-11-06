@@ -27,7 +27,7 @@ from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 import app_queries as ap
 from flask import Flask, request, render_template, g, redirect, Response, \
-                  session, url_for
+                  session, url_for, jsonify
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -160,9 +160,7 @@ def another():
   return render_template("another.html")
 
 
-@app.route('/incident')
-def incident():
-  return render_template("incident.html")
+
 
 
 @app.route('/labs')
@@ -179,23 +177,43 @@ def experiment():
 
      
     icursor = g.conn.execute("select * from experiment where entityid = {0}".format(user))
-    experiments = {}
-    for results in icursor:
-        experiments[results['experimentid']] = results
+    experiments = icursor.fetchall()
     icursor.close()
+    # for results in icursor:
+    #     experiments[results['experimentid']] = results
+    # icursor.close()
     
-    icursor = g.conn.execute("select distinct experimentstatus as status from experiment")
-    statuses = {}
-    i = 0
-    for results in icursor:
-        statuses[i] = results['status']
-        i = i+1
-    icursor.close()    
+
+    statuses = ['design', 'initiated', 'in-progress', 'closed', 'cancelled', 'on-hold']  
     
     
     
-    context = dict( data=experiments, statuses=statuses)
+    context = dict(comments=experiments, statuses=statuses)
     return render_template("experiment.html", **context)
+
+@app.route('/incident')
+def incident():
+    # has_experiments = ap.has_experiments(session['entityid'])
+    
+    user = session['entityid']
+    
+
+     
+    icursor = g.conn.execute("select * from laboratory where managingentityid = {0}".format(user))
+    experiments = icursor.fetchall()
+    icursor.close()
+    # for results in icursor:
+    #     experiments[results['experimentid']] = results
+    # icursor.close()
+    
+
+    statuses = ['design', 'initiated', 'in-progress', 'closed', 'cancelled', 'on-hold']  
+    
+    
+    
+    context = dict(comments=experiments)
+    return render_template("incident.html", **context)
+
 
 
 @app.route('/bioagent')
@@ -214,10 +232,40 @@ def add():
 
 @app.route('/add_experiment', methods=['POST'])
 def add_experiment():
-  name = request.form['name']
-  g.conn.execute("INSERT INTO test VALUES (5,'Chisom Amalunweze')",name)
-  return redirect('/')
+    
+    print(request.form.items())
+    user = session['entityid']
+    name = request.form['exstatus']
+    # name= 'closed'
+    start_date = request.form['startdate']
+    end_date = request.form['enddate']
+    
+    values = (user,name, start_date,end_date)
+    
+    q = 'insert into experiment(entityid,experimentstatus,experimentstartdate,experimentcloseddate) values (%s, %s, %s,%s)'
+    g.conn.execute(q,values)
+    return redirect(url_for('experiment'))
+    # return jsonify(request.form)
 
+
+@app.route('/add_incident', methods=['POST'])
+def add_incident():
+    
+    lab = request.form['labid']
+    report_date = request.form['reportdate']
+    occur_date = request.form['occurdate']
+    threatlevel = request.form['threatlevel']
+    incident_type = request.form['inctype']
+    incident_summary = request.form['incsummary']
+    
+    values = (lab, report_date, occur_date, threatlevel, incident_type, incident_summary)
+    
+    q = """insert into incident(laboratoryid, incidentreporteddate, incidentoccurreddate, 
+    threatlevel, incidenttype, incidentsummary) values (%s, %s, %s, %s, %s, %s)"""
+    
+    g.conn.execute(q,values)
+    
+    return redirect(url_for('incident'))
 
 
     
