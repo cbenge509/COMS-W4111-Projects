@@ -164,7 +164,16 @@ def another():
 
 @app.route('/labs')
 def labs():
-  return render_template("labs.html")
+    
+    user = session['entityid']
+    
+    icursor = g.conn.execute("select * from laboratory where managingentityid = {0}".format(user))
+    labs = icursor.fetchall()
+    icursor.close()
+    
+    context = dict(comments=labs)
+    
+    return render_template("labs.html", **context)
 
 
 @app.route('/experiment')
@@ -266,7 +275,20 @@ def add_incident():
     
     return redirect(url_for('incident'))
 
+@app.route('/add_lab', methods=['POST'])
+def add_lab():
+    user = session['entityid']
+    safetylevel = request.form['safetylevel']
+    managedsince = request.form['msincedate']
 
+    
+    values = (safetylevel, user, managedsince)
+    
+    q = """insert into laboratory(safetylevel,managingentityid, managedsincedate) values (%s, %s, %s)"""
+    
+    g.conn.execute(q,values)
+    
+    return redirect(url_for('labs'))
     
     
 @app.route('/login', methods=['GET', 'POST'])
