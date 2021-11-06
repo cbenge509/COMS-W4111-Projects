@@ -25,7 +25,6 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-import app_queries as ap
 from flask import Flask, request, render_template, g, redirect, Response, \
                   session, url_for, jsonify
 
