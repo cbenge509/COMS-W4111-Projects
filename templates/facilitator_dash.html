@@ -1,0 +1,72 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+    ul {
+    list-style-type: none;
+    }
+  </style>
+
+
+<body>
+      <h1>Facilitator Dashboard</h1>
+
+  <h1>Hello, {{ user }}.</h1>
+  
+
+  <p><a href="/logout_facilitator">Log Out</a></p>
+  
+  
+  {% if revs %}
+  <p>Inspections to Review</p>
+  <table style="width:100%">
+    <tr>
+      <th>Experimentid</th>
+      <th>Agent Name</th>
+      <th>Strain Name</th>
+      <th>Category</th>        
+    </tr>
+    {% for e in revs %}
+    <tr>
+      <td>{{e.laboratoryid}}</td>
+      <td>{{e.agentname}}</td>
+      <td>{{e.strainname}}</td>
+      <td>{{e.category}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}  
+  
+
+  
+  <p></p>
+    {% if reps %}
+    <p>Incidents to Review</p>
+    <table style="width:100%">
+      <tr>
+        <th>Experimentid</th>
+        <th>Agent Name</th>
+        <th>Strain Name</th>
+        <th>Category</th>        
+      </tr>
+      {% for e in reps %}
+      <tr>
+        <td>{{e.laboratoryid}}</td>
+        <td>{{e.agentname}}</td>
+        <td>{{e.strainname}}</td>
+        <td>{{e.category}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}  
+  
+
+  
+
+  <p>
+  
+ </body>
+
+</html>

@@ -119,6 +119,103 @@ def research_dashboard():
     context = dict(user=username)
     return render_template('research-dashboard.html', **context)
 
+
+
+def admin_dashboard():
+    user = session['adminid']
+    
+    cursor = g.conn.execute("select adminfirstname||' '||adminlastname as name from administrator where administratorid = {0}".format(user))
+    username ={}
+    for r in cursor:
+        username = r['name']
+    cursor.close()   
+    
+    initiated_exp = g.conn.execute(""" select  e.experimentId, b.agentName, b.strainName, b.category, eb.agentQuantity, eb.agentUnitOfMeasure
+                                   from  Experiment e
+        join Experiment_BioAgent eb on e.experimentId = eb.experimentId
+        join BioAgent b on eb.agentId = b.agentId
+        where  e.experimentStatus = 'initiated'
+        order  by e.experimentId, b.agentName, b.strainName
+                                   """)
+    init_exps = initiated_exp.fetchall()
+    initiated_exp.close()
+                                   
+    
+    context = dict(user=username, exps  = init_exps)
+    return render_template('admin_dashboard.html', **context)
+
+
+def inspect_dash():
+    user = session['inspectorid']
+    
+    cursor = g.conn.execute("select inspectorfirstname||' '||inspectorlastname as name from inspector where inspectorid = {0}".format(user))
+    username ={}
+    for r in cursor:
+        username = r['name']
+    cursor.close()   
+    
+    
+    non_inspected = g.conn.execute("""
+                                   with ins as (
+    select  li.laboratoryId, max(li.scheduledDate) as scheduleDate
+      from  laboratoryInspection li
+     where  li.inspectionType in ('ad-hoc', 'routine')
+       and  li.inspectionOutcome = 'successful'
+     group  by li.laboratoryId
+    having  max(li.scheduledDate) >= (now() - INTERVAL '1 YEAR')
+)
+
+select  l.laboratoryId, l.safetyLevel, e.entityName, e.contactFirstName, e.contactLastName, e.contactPhoneNumber, e.contactEmailAddress
+  from  Laboratory l
+        join ins on l.laboratoryId = ins.laboratoryId
+        join ResearchEntity e on l.managingEntityId = e.entityId 
+                                   """)
+    non_inspect = non_inspected.fetchall()
+    non_inspected.close()
+    
+    context = dict(user=username,nons= non_inspect)
+    
+    return  render_template('inspect_dash.html', **context)
+
+def facilitator_dash():
+    user = session['facilitatorid']
+    
+    cursor = g.conn.execute("select facilitatorfirstname||' '||facilitatorlastname as name from facilitator where facilitatorid = {0}".format(user))
+    username ={}
+    for r in cursor:
+        username = r['name']
+    cursor.close()   
+    
+    
+    revcursor = g.conn.execute("""
+                               select  l.laboratoryId, l.safetyLevel, e.entityName, li.scheduledDate, li.inspectionType, li.inspectionOutcome, li.inspectionNotes
+  from  LaboratoryInspection li
+        join Laboratory l on li.laboratoryId = l.laboratoryId
+        join ResearchEntity e on l.managingEntityId = e.entityId
+ where  li.inspectionOutcome is not null
+   and  li.reviewedByFacilitatorId is null
+                               """)
+    to_review = revcursor.fetchall()
+    revcursor.close()
+    
+    repcursor = g.conn.execute("""
+                               select  l.laboratoryId, e.entityName, i.incidentReportedDate, i.incidentOccurredDate, i.threatLevel, i.incidentType, i.incidentSummary,
+        i.investigationOpenDate, i.investigationClosedDate, i.investigatedByFacilitatorId
+  from  Incident i
+        join Laboratory l on i.laboratoryId = l.laboratoryId
+        join ResearchEntity e on l.managingEntityId = e.entityId
+ where  coalesce(i.investigationStatus, 'open') = 'open'
+                               """)
+    reports = repcursor.fetchall()
+    repcursor.close()                          
+    
+    context = dict(user=username, revs= to_review, reps = reports)
+    
+    return  render_template('facilitator_dash.html', **context)
+
+
+
+
 @app.route('/')
 def index():
     # print(request.args)
@@ -128,6 +225,15 @@ def index():
         # return render_template("another.html")
         return research_dashboard()
     
+    if 'adminid' in session:
+        return admin_dashboard()
+    
+    if 'inspectorid' in session:
+        return inspect_dash()
+    
+    if 'facilitatorid' in session:
+        return facilitator_dash()
+    
     
     
     cursor = g.conn.execute("SELECT entityid, entityname FROM researchentity")
@@ -135,9 +241,29 @@ def index():
     for result in cursor:
         users[result['entityid']] = result['entityname']
     cursor.close()  
+    
+    
+    admincursor = g.conn.execute("select administratorid, adminfirstname||' '||adminlastname as name from administrator")
+    admins = {}
+    for result in admincursor:
+        admins[result['administratorid']] = result['name']
+    admincursor.close()
+    
+    
+    inspectcursor = g.conn.execute("select inspectorid,  inspectorfirstname||' '||inspectorlastname as name from inspector")
+    inspects = {}
+    for result in inspectcursor:
+        inspects[result['inspectorid']] = result['name']
+    inspectcursor.close()
+    
+    facilcursor = g.conn.execute("select facilitatorid,  facilitatorfirstname||' '||facilitatorlastname as name from facilitator")
+    facils = {}
+    for result in facilcursor:
+        facils[result['facilitatorid']] = result['name']
+    facilcursor.close() 
       
 
-    context = dict(data = users)
+    context = dict(data = users, admindata = admins, inspectdata = inspects, facildata=facils)
     
     
     #
@@ -236,7 +362,19 @@ def add():
   g.conn.execute("INSERT INTO test VALUES (5,'Chisom Amalunweze')",name)
   return redirect('/')
 
-
+@app.route('/approve_exp', methods=['POST'])
+def approve_exp():
+      newstatus = request.form['exstatus']
+      expid = request.form['expid']
+     
+      values = (newstatus, expid)
+     
+      q = "UPDATE experiment set experimentstatus = %s where experimentid = %s"
+     
+      g.conn.execute(q,values)
+    
+      return admin_dashboard()
+     # return jsonify(request.form)
 
 @app.route('/add_experiment', methods=['POST'])
 def add_experiment():
@@ -275,6 +413,28 @@ def add_incident():
     
     return redirect(url_for('incident'))
 
+
+@app.route('/add_inspection', methods=['POST'])
+def add_inspection():
+    
+    user = session['inspectorid']
+    lab = request.form['labid']
+    report_date = request.form['scheddate']
+    occur_date = request.form['insptype']
+    threatlevel = request.form['inspoutcome']
+    incident_type = request.form['inspnotes']
+    # incident_summary = request.form['incsummary']
+    
+    values = (lab, user, report_date, occur_date, threatlevel, incident_type)
+    
+    q = """insert into laboratoryinspection(laboratoryid, inspectorid, scheduleddate, inspectiontype, 
+    inspectionoutcome, inspectionnotes) values (%s, %s, %s, %s, %s, %s)"""
+    
+    g.conn.execute(q,values)
+    
+    return inspect_dash()
+    # return jsonify(request.form)
+
 @app.route('/add_lab', methods=['POST'])
 def add_lab():
     user = session['entityid']
@@ -296,10 +456,51 @@ def login():
     if request.method == 'POST':
         session['entityid'] = request.form['entityid']
     return redirect(url_for('index'))
+
+
+@app.route('/login_admin', methods=['GET', 'POST'])
+def login_admin():
+    if request.method == 'POST':
+        session['adminid'] = request.form['administratorid']
+    return redirect(url_for('index'))
+    # return jsonify(request.form)
+
+
+@app.route('/login_facilitator', methods=['GET', 'POST'])
+def login_facilitator():
+    if request.method == 'POST':
+        session['facilitatorid'] = request.form['facilitatorid']
+    return redirect(url_for('index'))
+
+
+@app.route('/login_inspector', methods=['GET', 'POST'])
+def login_inspector():
+    if request.method == 'POST':
+        session['inspectorid'] = request.form['inspectorid']
+    return redirect(url_for('index'))
+
     
 @app.route('/logout')
 def logout():
     session.pop('entityid', None)
+    return redirect(url_for('index'))
+
+@app.route('/logout_admin')
+def logout_admin():
+    
+    session.pop('adminid',None)
+    return redirect(url_for('index'))
+
+@app.route('/logout_inspect')
+def logout_inspect():
+    
+    session.pop('inspectorid',None)
+    return redirect(url_for('index'))
+
+@app.route('/logout_facilitator')
+def logout_facil():
+    
+    session.pop('facilitatorid',None)
     return redirect(url_for('index'))
 
 if __name__ == "__main__":

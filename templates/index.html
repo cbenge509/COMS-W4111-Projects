@@ -1,4 +1,5 @@
 <html>
+<img src="http://portal.seas.columbia.edu/seas/logos/NewEngineeringDkBlue.png" alt="Columbia" style="width:30%">
   <style>
     body{ 
       font-size: 15pt;
@@ -8,14 +9,43 @@
 
 
 <body>
-  <h1>Welcome! Please select your research entity</h1>
-  <div>{{data}}</div>
 
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
+
+
+
+  <h1>Welcome! Please select your profile</h1>
+
+    <form action="/login_admin" method="POST">
+    <select name="administratorid" id="user">
+        {% for administratorid, name in admindata.items() %}
+            <div> <option value="{{administratorid}}"> {{ name }} </option> </div>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Select Admin">
+  </form>
+
+
+    <form action="/login_inspector" method="POST">
+    <select name="inspectorid" id="user">
+        {% for inspectorid, name in inspectdata.items() %}
+            <div> <option value="{{inspectorid}}"> {{ name }} </option> </div>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Select Inspector">
+  </form>
+
+
+    <form action="/login_facilitator" method="POST">
+    <select name="facilitatorid" id="user">
+        {% for facilitatorid, name in facildata.items() %}
+            <div> <option value="{{facilitatorid}}"> {{ name }} </option> </div>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Select facilitator">
+  </form>
+
+
+
   
     <form action="/login" method="POST">
     <select name="entityid" id="user">
@@ -23,16 +53,8 @@
             <div> <option value="{{entityid}}"> {{ entityname }} </option> </div>
         {% endfor %}
     </select>
-    <input type="submit" value="Select">
+    <input type="submit" value="Select Research Entity">
   </form>
-
-
-<p><a href="another">Go to the other page</a></p>
-
-
-<form method="POST" action="/add">
-<p>Name of new research entity: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
 
 </body>
 

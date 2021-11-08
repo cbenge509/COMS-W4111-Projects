@@ -1,0 +1,73 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+    ul {
+    list-style-type: none;
+    }
+  </style>
+
+
+<body>
+      <h1>Inspector Dashboard</h1>
+
+  <h1>Hello, {{ user }}.</h1>
+  
+    <p><a href="/logout_inspect">Log Out</a></p>
+  
+  
+    {% if nons%}
+    <p>Facilities Needing Inspection</p>
+    <table style="width:100%">
+      <tr>
+        <th>ELab Id</th>
+        <th>Safety Level</th>
+        <th>Entity Name</th>
+        <th>Contact First Name</th>        
+      </tr>
+      {% for e in nons %}
+      <tr>
+        <td>{{e.laboratoryid}}</td>
+        <td>{{e.safetylevel}}</td>
+        <td>{{e.entityname}}</td>
+        <td>{{e.contactfirstname}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% endif %}
+  
+  
+  
+  <form method="POST" action="/add_inspection">
+  <p>Record an Inspection: </p>
+        <label for="labid">Laboratory ID:</label><br>
+        <input type="number" id="labid" name="labid"> </br>
+    <label for="scheduleddate">Inspection Scheduled Date:</label><br>
+    <input type="date" id="scheduleddate" name="scheddate"><br>
+    <label for="insptype">Inspection Type:</label><br>
+    <select name="insptype" id="estatus">
+            <option value = "routine" selected>Routine</option>
+            <option value = "incident-based">incident based</option>
+            <option value = "ad-hoc">Ad Hoc</option>
+    </select>
+    <p></p>
+        <select name="inspoutcome" id="inspout">
+                <option value = "successful" selected>Successful</option>
+                <option value = "failed">failed</option>
+                <option value = "inconclusive">inconclusive</option>
+        </select>
+       <label for="inspnotes">Inspection Notes:</label><br> 
+       <input type="text" id="inspnotes" name="inspnotes"><br>
+  <input type="submit" value="Add"></p>
+  </form>
+
+
+  
+
+  <p>
+  
+ </body>
+
+</html>

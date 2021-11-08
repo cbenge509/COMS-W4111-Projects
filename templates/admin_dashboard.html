@@ -1,0 +1,58 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+    ul {
+    list-style-type: none;
+    }
+  </style>
+
+
+<body>
+      <h1>Admin Dashboard</h1>
+
+  <h1>Hello, {{ user }}.</h1>
+  
+
+  <p><a href="/logout_admin">Log Out</a></p>
+  
+  
+  {% if exps %}
+  <p>Your Initiated Experiments</p>
+  <table style="width:100%">
+    <tr>
+      <th>Experimentid</th>
+      <th>Agent Name</th>
+      <th>Strain Name</th>
+      <th>Category</th>        
+    </tr>
+    {% for e in exps %}
+    <tr>
+      <td>{{e.experimentid}}</td>
+      <td>{{e.agentname}}</td>
+      <td>{{e.strainname}}</td>
+      <td>{{e.category}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+  
+  <form method="POST" action="/approve_exp">
+    <p>Update Initiated Experiment Status: </p>
+      <label for="experimentid">Experiment ID:</label><br>
+      <input type="number" id="experimentid" name="expid"> </br>
+      <select name="exstatus" id="estatus">
+              <option value = "in-progress">Approved</option>
+              <option value = "cancelled">Not Approved</option>
+      </select>
+    <input type="submit" value="Update"></p>
+    </form>
+
+
+  <p>
+  
+ </body>
+
+</html>
