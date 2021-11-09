@@ -1,5 +1,13 @@
 <html>
   <style>
+  table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+  }
+  th, td {
+      padding: 5px;
+      text-align: left;
+  }
     body{
       font-size: 15pt;
       font-family: arial;
@@ -8,7 +16,6 @@
     list-style-type: none;
     }
   </style>
-
 
 <body>
       <h1>Admin Dashboard</h1>
@@ -26,7 +33,9 @@
       <th>Experimentid</th>
       <th>Agent Name</th>
       <th>Strain Name</th>
-      <th>Category</th>        
+      <th>Category</th> 
+      <th>Agent Quantity</th>
+      <th>Agent Unit Of Measure</th>       
     </tr>
     {% for e in exps %}
     <tr>
@@ -34,6 +43,8 @@
       <td>{{e.agentname}}</td>
       <td>{{e.strainname}}</td>
       <td>{{e.category}}</td>
+      <td>{{e.agentquantity}}</td>
+      <td>{{e.agentunitofmeasure}}</td>
     </tr>
     {% endfor %}
   </table>

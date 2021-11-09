@@ -1,5 +1,13 @@
 <html>
   <style>
+  table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+  }
+  th, td {
+      padding: 5px;
+      text-align: left;
+  }
     body{
       font-size: 15pt;
       font-family: arial;
@@ -8,7 +16,6 @@
     list-style-type: none;
     }
   </style>
-
 
 <body>
       <h1>Inspector Dashboard</h1>
@@ -19,13 +26,16 @@
   
   
     {% if nons%}
-    <p>Facilities Needing Inspection</p>
+    <h3>Facilities Needing Inspection</h3>
     <table style="width:100%">
       <tr>
-        <th>ELab Id</th>
+        <th>Lab Id</th>
         <th>Safety Level</th>
         <th>Entity Name</th>
-        <th>Contact First Name</th>        
+        <th>Contact First Name</th>    
+        <th>Contact Last Name</th> 
+        <th>Contact Phone Number</th> 
+        <th>Contact Email Address</th>     
       </tr>
       {% for e in nons %}
       <tr>
@@ -33,6 +43,9 @@
         <td>{{e.safetylevel}}</td>
         <td>{{e.entityname}}</td>
         <td>{{e.contactfirstname}}</td>
+        <td>{{e.contactlastname}}</td>
+        <td>{{e.contactphonenumber}}</td>
+        <td>{{e.contactemailaddress}}</td>
       </tr>
       {% endfor %}
     </table>
@@ -41,7 +54,7 @@
   
   
   <form method="POST" action="/add_inspection">
-  <p>Record an Inspection: </p>
+  <h4>Record an Inspection: </h4>
         <label for="labid">Laboratory ID:</label><br>
         <input type="number" id="labid" name="labid"> </br>
     <label for="scheduleddate">Inspection Scheduled Date:</label><br>
@@ -52,7 +65,7 @@
             <option value = "incident-based">incident based</option>
             <option value = "ad-hoc">Ad Hoc</option>
     </select>
-    <p></p>
+    <label for="inspoutcome">Inspection Outcome:</label><br> 
         <select name="inspoutcome" id="inspout">
                 <option value = "successful" selected>Successful</option>
                 <option value = "failed">failed</option>

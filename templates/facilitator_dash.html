@@ -1,5 +1,13 @@
 <html>
   <style>
+  table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+  }
+  th, td {
+      padding: 5px;
+      text-align: left;
+  }
     body{
       font-size: 15pt;
       font-family: arial;
@@ -8,7 +16,6 @@
     list-style-type: none;
     }
   </style>
-
 
 <body>
       <h1>Facilitator Dashboard</h1>
@@ -20,20 +27,26 @@
   
   
   {% if revs %}
-  <p>Inspections to Review</p>
+  <h4>Inspections to Review</h4>
   <table style="width:100%">
     <tr>
-      <th>Experimentid</th>
-      <th>Agent Name</th>
-      <th>Strain Name</th>
-      <th>Category</th>        
+      <th>laboratory Id</th> 
+      <th>safetyLevel</th>
+      <th>entity Name</th>
+      <th>scheduled Date</th>
+       <th>inspection Type</th>  
+        <th>inspection Outcome</th>  
+         <th>inspection Notes</th>         
     </tr>
     {% for e in revs %}
     <tr>
       <td>{{e.laboratoryid}}</td>
-      <td>{{e.agentname}}</td>
-      <td>{{e.strainname}}</td>
-      <td>{{e.category}}</td>
+      <td>{{e.safetylevel}}</td>
+      <td>{{e.entityname}}</td>
+      <td>{{e.scheduleddate}}</td>
+      <td>{{e.inspectiontype}}</td>
+      <td>{{e.inspectionoutcome}}</td>
+      <td>{{e.inspectionnotes}}</td>
     </tr>
     {% endfor %}
   </table>
@@ -46,17 +59,29 @@
     <p>Incidents to Review</p>
     <table style="width:100%">
       <tr>
-        <th>Experimentid</th>
-        <th>Agent Name</th>
-        <th>Strain Name</th>
-        <th>Category</th>        
+            <th>laboratory Id</th> 
+            <th>entity Name</th>
+            <th>sIncident Report Date</th>
+             <th>Incident Occurred Date</th>  
+              <th>Threat Level</th>  
+               <th>Incident Type</th>  
+      <th>Incident Summary</th>  
+      <th>Investigation Open Date</th>  
+      <th>Investigation Closed Date</th>  
+      <th>Investigated By Facilitator Id</th>        
       </tr>
       {% for e in reps %}
       <tr>
         <td>{{e.laboratoryid}}</td>
-        <td>{{e.agentname}}</td>
-        <td>{{e.strainname}}</td>
-        <td>{{e.category}}</td>
+        <td>{{e.entityname}}</td>
+        <td>{{e.incidentreporteddate}}</td>
+        <td>{{e.incidentoccurreddate}}</td>
+        <td>{{e.threatlevel}}</td>
+        <td>{{e.incidenttype}}</td>
+        <td>{{e.incidentsummary}}</td>
+        <td>{{e.investigationopendate}}</td>
+        <td>{{e.investigationcloseddate}}</td>
+        <td>{{e.investigatedbyfacilitatorid}}</td>
       </tr>
       {% endfor %}
     </table>

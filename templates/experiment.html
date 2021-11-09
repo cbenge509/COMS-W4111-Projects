@@ -15,7 +15,7 @@ th, td {
   <p><a href="/">Back to landing</a></p>
 
 {% if comments %}
-<p>Your Experiments</p>
+<h2>Your Experiments</h2>
 <table style="width:100%">
   <tr>
     <th>Experimentid</th>
@@ -36,11 +36,12 @@ th, td {
 
 
   <form method="POST" action="/add_experiment">
-  <p>Create a new experiment: </p>
-    <label for="experimentstartdate">Experiment Start Date:</label><br>
-    <input type="date" id="experimentstartdate" name="startdate"><br>
-    <label for="experimentenddate">Experiment End Date:</label><br>
-    <input type="date" id="experimentenddate" name="enddate"> </br>
+  <h3>Create a new experiment: </h3>
+    <label for="experimentstartdate">Experiment Start Date:</label>
+    <input type="date" id="experimentstartdate" name="startdate" size="25">
+    <label for="experimentenddate">Experiment End Date:</label>
+    <input type="date" id="experimentenddate" name="enddate" size="25">
+    <label for="exstatus">Experiment Status:<label>
     <select name="exstatus" id="estatus">
             <option value = "design" selected>Design</option>
             <option value = "initiated">initiated</option>
@@ -51,3 +52,23 @@ th, td {
     </select>
   <input type="submit" value="Add"></p>
   </form>
+  
+  
+  <h3>Update Experiment</h3>
+    <form method="POST" action="/update_experiment">
+      <label for="experimentid">Experiment ID:</label>
+      <input type="number" id="experimentid" name="expid" size="25">
+      <label for="experimentenddate">Experiment End Date:</label>
+      <input type="date" id="experimentenddate" name="enddate" size="25">
+      <label for="exstatus">Experiment Status:<label>
+      <select name="exstatus" id="estatus">
+              <option value = "design" selected>Design</option>
+              <option value = "initiated">initiated</option>
+              <option value = "in-progress">in-progress</option>
+              <option value = "closed">closed</option>
+              <option value = "cancelled">cancelled</option>
+              <option value = "on-hold">on-hold</option>
+      </select>
+    <input type="submit" value="Update"></p>
+    </form>
+  

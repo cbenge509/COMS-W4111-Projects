@@ -379,16 +379,43 @@ def approve_exp():
 @app.route('/add_experiment', methods=['POST'])
 def add_experiment():
     
-    print(request.form.items())
     user = session['entityid']
     name = request.form['exstatus']
     # name= 'closed'
     start_date = request.form['startdate']
     end_date = request.form['enddate']
     
-    values = (user,name, start_date,end_date)
     
-    q = 'insert into experiment(entityid,experimentstatus,experimentstartdate,experimentcloseddate) values (%s, %s, %s,%s)'
+    if len(end_date) < 1:
+        
+        values = (user,name, start_date)
+        q = 'insert into experiment(entityid,experimentstatus,experimentstartdate) values (%s, %s, %s)'
+        
+    else:
+        values = (user,name, start_date,end_date) 
+        q = 'insert into experiment(entityid,experimentstatus,experimentstartdate,experimentcloseddate) values (%s, %s, %s,%s)'
+    g.conn.execute(q,values)
+    return redirect(url_for('experiment'))
+    # return jsonify(request.form)
+
+
+@app.route('/update_experiment', methods=['POST'])
+def update_experiment():
+    
+    user = session['entityid']
+    name = request.form['exstatus']
+    # name= 'closed'
+    expid = request.form['expid']
+    end_date = request.form['enddate']
+    
+    
+    if len(end_date) < 1:
+        values = (name, expid,user)
+        q = 'update experiment set  experimentstatus = %s where  experimentid = %s and entityid = %s'
+        
+    else:
+        values = (name, end_date, expid,user)
+        q = 'update experiment set  experimentstatus = %s, experimentcloseddate = %s where  experimentid = %s and entityid = %s'
     g.conn.execute(q,values)
     return redirect(url_for('experiment'))
     # return jsonify(request.form)
@@ -439,7 +466,7 @@ def add_inspection():
 def add_lab():
     user = session['entityid']
     safetylevel = request.form['safetylevel']
-    managedsince = request.form['msincedate']
+    managedsince = request.form['msdate']
 
     
     values = (safetylevel, user, managedsince)
@@ -449,6 +476,24 @@ def add_lab():
     g.conn.execute(q,values)
     
     return redirect(url_for('labs'))
+    # return jsonify(request.form)
+
+@app.route('/update_lab', methods=['POST'])
+def update_lab():
+    user = session['entityid']
+    safetylevel = request.form['safetylevel']
+    managedsince = request.form['msdate']
+    labid = request.form['labid']
+    
+    values = (safetylevel,managedsince, user, labid)
+    
+    q = 'update laboratory set safetylevel = %s, managedsincedate = %s where managingentityid = %s and laboratoryid = %s'
+    
+    g.conn.execute(q,values)
+    
+    return redirect(url_for('labs'))
+    
+    # return jsonify(request.form)
     
     
 @app.route('/login', methods=['GET', 'POST'])
