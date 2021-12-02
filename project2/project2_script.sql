@@ -75,7 +75,7 @@ values(row('Charles','Babbage')),
 insert  into Laboratory_with_array (safetyLevel, managingEntityId, managedSinceDate, inspectionSchedule, inspectionCertifications)
     select  floor(random() * 3) as safetyLevel, e.entityId, 
             (select now() - '1 years'::interval * round(random() * 2)) as managedSince,
-            '{"January", "March", "June", "September" }', 'Safety1 Safety2 HazardousMaterials TentedPrograms HazMatApproved'
+            '{"January", "March", "June", "September" }', to_tsvector('Safety1 Safety2 HazardousMaterials TentedPrograms HazMatApproved')
     from  ResearchEntity e;
 
 --- *******************************************
