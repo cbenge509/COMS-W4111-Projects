@@ -2,7 +2,7 @@ COMS W4111 - Introduction to Databases - Project 1 & 2
 ==========================================================
 <img align="right" width="180" src="./images/cu_logo.jpg"/>
 
-#### Project 1 for the Fall of 2021
+#### Project 1 & 2 for the Fall of 2021
 #### Authors : [Cristopher Benge](https://cbenge509.github.io/) | [Chisom Amalunweze](https://www.linkedin.com/in/chisomamalunweze/)
 <br><br><br><br>
 Columbia University in the City of New York
