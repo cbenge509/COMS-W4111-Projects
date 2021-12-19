@@ -1,4 +1,4 @@
-COMS W4111 - Introduction to Databases - Project #1
+COMS W4111 - Introduction to Databases - Project 1 & 2
 ==========================================================
 <img align="right" width="180" src="./images/cu_logo.jpg"/>
 
